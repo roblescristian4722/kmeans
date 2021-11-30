@@ -3,14 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import numpy as np
 
-data = np.array([[1, 2],
-              [1.5, 1.8],
-              [5, 8 ],
-              [8, 8],
-              [1, 0.6],
-              [9,11]])
+dataset_size = 100
+dimensions = 2
 
-k = 2
+x1 = np.random.standard_normal((dataset_size, dimensions)) * 0.6 + np.ones((dataset_size, dimensions))
+x2 = np.random.standard_normal((dataset_size, dimensions)) * 0.5 - np.ones((dataset_size, dimensions))
+x3 = np.random.standard_normal((dataset_size, dimensions)) * 0.4 - 2 * np.ones((dataset_size, dimensions)) + 5
+data = np.concatenate((x1,x2,x3),axis=0)
+
+k = 3
 tol = 0.001
 max_iter = 300
 centroids = {}
@@ -19,11 +20,6 @@ classif = {}
 # Se obtienen los primeros puntos como centroides
 for i in range(k):
     centroids[i] = data[i]
-
-def predict(data, centroids):
-    distances = [np.linalg.norm(data - centroids[centroid]) for centroid in centroids]
-    cl = distances.index(min(distances))
-    return cl
 
 # comenzamos a iterar
 for i in range(max_iter):
@@ -54,14 +50,16 @@ for i in range(max_iter):
         current_centroid = centroids[c]
         if np.sum((current_centroid - original_centroid) / original_centroid * 100) > tol:
             optimized = False
+    # Si los centroides están optimizados entonces se hace una graficación de los datos
+    # y la ejecución termina
     if optimized:
         for c in centroids:
-            plt.scatter(centroids[c][0], centroids[c][1], marker='o', color='k', s=150, linewidths=5)
+            plt.scatter(centroids[c][0], centroids[c][1], marker='o', color='k')
 
-        colors = ['r', 'b']
+        colors = ['r', 'b', 'g']
         for c in classif:
             color = colors[c]
             for fs in classif[c]:
-                plt.scatter(fs[0], fs[1], marker='x', color=color, linewidths=5)
+                plt.scatter(fs[0], fs[1], marker='x', color=color)
         plt.show()
         break
